@@ -1,0 +1,12 @@
+[package]
+name = "task-manager"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+egui = "0.23.0"
+eframe = "0.23.0"
+nix = "0.27.1"
+num_cpus = "1.16.0"
+rayon = "1.8.0"
+criterion = "0.5.1"
