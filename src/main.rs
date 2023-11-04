@@ -3,6 +3,7 @@
 
 mod task;
 mod task_calls;
+mod task_tree;
 
 use std::{fs::read, ops::Deref, path::PathBuf};
 fn main() {
