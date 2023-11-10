@@ -10,7 +10,7 @@ use crate::task_calls::{is_pid, self};
 use crate::task_tree::*;
 
 #[derive(Debug)]
-pub struct Task<'a> {
+pub struct Task {
     pub pid: u64,
     pub cpu_usage: u64,
     pub mem_usage: u64,
@@ -21,18 +21,15 @@ pub struct Task<'a> {
     // // pub parent: Option<&'a Task<'a>>,
     // pub children: Option<Vec<Mutex<Arc<Task<'a>>>>>,
 }
-impl Task {
-    fn new() -> Task {
+// impl Task {
+//     fn new() -> Task {
 
-    }
-}
-pub fn parse_list_to_tree(vec: Vec<Task>) -> Task {
-
-}
+//     }
+// }
 
 // gets called only once at runtime
-pub fn add_tasks_at_startup_p <'a>() -> Vec<Arc<Mutex<Task<'a>>>> {
-    let mut tasks: Vec<Arc<Mutex<Task<'a>>>> = Vec::new();
+pub fn add_tasks_at_startup_p <'a>() -> Vec<Arc<Mutex<Task>>> {
+    let mut tasks: Vec<Arc<Mutex<Task>>> = Vec::new();
     if let Ok(proc_entries) = std::fs::read_dir("/proc") {
         tasks = proc_entries
             .par_bridge()
@@ -48,7 +45,7 @@ pub fn add_tasks_at_startup_p <'a>() -> Vec<Arc<Mutex<Task<'a>>>> {
                     runtime: task_calls::fetch_running_time(&pid),
                     command: task_calls::fetch_command(&pid), 
                     // parent: None,
-                    children: None,
+                    // children: None,
                 }))
             })
             .collect();
