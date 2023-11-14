@@ -12,8 +12,8 @@ fn main() {
     //     task_calls::fetch_command(&entry.unwrap());
     // }
 
-    let vec = task::add_tasks_at_startup_p();
-    dbg!(vec);
+    let test_map = task_tree::TaskTree::new();
+    dbg!(test_map);
 
 
     // dbg!(vec);
