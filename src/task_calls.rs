@@ -8,7 +8,7 @@ use std::io;
 
 use nix::libc::system;
 
-use crate::task::Task;
+use crate::task::Process;
 
 pub fn fetch_command(pid: &u64) -> Option<String> {
     let cmdline_str = format!("/proc/{}/cmdline", pid);
