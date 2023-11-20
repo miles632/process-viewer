@@ -1,12 +1,11 @@
 #![warn(unused_variables)]
+// #![recursion_limit = "3000"]
 
-use std::{sync::{Arc, Mutex, atomic::{AtomicBool, Ordering}}, ops::Deref};
+use std::sync::{Arc, Mutex};
 use std::rc::Rc;
 
-use std::hash::Hash;
 use std::io::Read;
 use std::fs::{read_to_string, File, read_dir, DirEntry};
-use std::collections::HashMap;
 use rayon::{prelude::ParallelIterator, iter::IntoParallelRefIterator};
 use rayon::{iter::ParallelBridge};
 use std::cell::RefCell;
@@ -24,19 +23,22 @@ fn parse_from_status_slice(input: &str) -> u64 {
     value
 }
 
-fn check_for_children_processes(ppid_pool: &Vec<u64>, node: u64) -> Vec<u64> {
+fn check_for_children_processes(ppid_pool: &Vec<u64>, node: u64) -> Option<Vec<u64>> {
     let mut matching_children: Vec<u64> = Vec::new();
     for ppid in ppid_pool {
         if *ppid == node {
             matching_children.push(*ppid);
         }
     }
-    matching_children
+    if matching_children.is_empty() {
+        return None;
+    } 
+    Some(matching_children)
 }
 #[derive(Debug)]
 pub struct ProcessTree {
     task: Box<Process>,
-    children: Vec<Mutex<Box<ProcessTree>>>
+    children: Option<Box<Vec<Mutex<ProcessTree>>>>
 }
 
 impl ProcessTree {
@@ -83,35 +85,44 @@ impl ProcessTree {
                 ppid_pid.0
             }).collect::<Vec<u64>>();
 
-            let Process_Trees =
+            let process_Trees =
                 root_pids.iter().map(|pid| {
-                    let tree = ProcessTree {
-                        task: Box::new(Process::new(*pid)),
-                        children: Self::recursively_construct_children(pid, ppid_pool),
-                    };
-                    tree
-                }).collect::<Vec<ProcessTree>>();
+                    // println!("beginning iteration");
+                    // let tree = Box::new(ProcessTree {
+                    //     task: Box::new(Process::new(*pid)),
+                    //     children: Self::recursively_construct_children(pid, ppid_pool),
+                    // });
+                    // tree
+                    let task = Box::new(Process::new(*pid));
+                    println!("task successfully made");
+                    let children = Self::recursively_construct_children(pid, ppid_pool);
+                    println!("children successfully made");
+                    let ptree = Box::new(ProcessTree {
+                        task: task,
+                        children: children,
+                    });
+                    ptree
+                }).collect::<Vec<Box<ProcessTree>>>();
         };
         dbg!(process_trees)
 
     }
-   fn recursively_construct_children(pid: &u64, ppid_pool: &Vec<u64>) -> Vec<Mutex<Box<ProcessTree>>> {
-        let children_processes = check_for_children_processes(ppid_pool, *pid);
+    fn recursively_construct_children(
+        pid: &u64, ppid_pool: &Vec<u64>) 
+    -> Option<Box<Vec<Mutex<ProcessTree>>>> {
+        if let Some(children_processes) = check_for_children_processes(ppid_pool, *pid) {
+            let mut vec = Box::new(Vec::<Mutex<ProcessTree>>::new());
 
-        let mut vec = Vec::<Mutex<Box<ProcessTree>>>::new();
-
-        for child in children_processes {
-            let new_subtree = ProcessTree {
-                task: Box::new(Process::new(child)),
-                children: Self::recursively_construct_children(&child, &ppid_pool),
-            };
-            vec.push(Mutex::new(Box::new(new_subtree)));
-        }
-        vec
+            for child in children_processes {
+                let new_subtree = ProcessTree {
+                    task: Box::new(Process::new(child)),
+                    children: Self::recursively_construct_children(&child, &ppid_pool),
+                };
+                vec.push(Mutex::new(new_subtree));
+            }
+            Some(vec)
+        } else { None }
     }
-
-
-
 }
 
         
