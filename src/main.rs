@@ -7,20 +7,14 @@ mod task_calls;
 mod task_tree;
 
 use std::{fs::read, ops::Deref, path::PathBuf};
+use task::Process;
+use task_tree::ProcessTree;
+
 use crate::task_calls::fetch_running_time;
 use std::thread;
 
 fn main() {
-    // let entries = std::fs::read_dir("/proc").unwrap();
-    // for entry in entries {
-    //     task_calls::fetch_command(&entry.unwrap());
-    // }
-
-    let stack_size = 8*1024*1024*1024;
-    let builder = thread::Builder::new().stack_size(stack_size);
-    builder.spawn(|| {
-        task_tree::ProcessTree::new();
-    }).unwrap().join().unwrap();
+    ProcessTree::new();
 
     
 

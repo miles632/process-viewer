@@ -1,7 +1,6 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
-use nix;
 use std::{sync::{mpsc::channel, Arc, Mutex}, path::PathBuf, marker::PhantomData, fs};
 use std::fmt::format;
 use rayon::{iter::ParallelBridge, prelude::{IntoParallelIterator, ParallelIterator, IntoParallelRefIterator}};
