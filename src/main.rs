@@ -14,7 +14,8 @@ use crate::task_calls::fetch_running_time;
 use std::thread;
 
 fn main() {
-    ProcessTree::new();
+    // let ptree = ProcessTree::new();
+    // println!("{}"ptree[1].get_number_of_processes());
 
     
 

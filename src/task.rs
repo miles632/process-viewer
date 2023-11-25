@@ -9,7 +9,7 @@ use std::fs::File;
 use crate::task_calls::{is_pid, self, fetch_command, fetch_running_time};
 use crate::task_tree::*;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Process {
     pub pid: u64,
     // pub cpu_usage: u64,
