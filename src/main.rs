@@ -9,21 +9,14 @@ mod task_tree;
 use std::{fs::read, ops::Deref, path::PathBuf};
 use task::Process;
 use task_tree::ProcessTree;
+use std::sync::Mutex;
 
 use crate::task_calls::fetch_running_time;
 use std::thread;
 
 fn main() {
-    // let ptree = ProcessTree::new();
-    // println!("{}"ptree[1].get_number_of_processes());
-
-    
-
-    // let runningtime = fetch_running_time(&633).unwrap();
-    // println!("{}", runningtime);
-
-
-    // dbg!(vec);
-
-
+    let trees = ProcessTree::new();
+    trees.iter().for_each(|tree|{
+        println!("number of processes of tree {}: {}", tree.task.command.as_ref().unwrap(), tree.get_number_of_processes());
+    });
 }
