@@ -130,4 +130,10 @@ impl ProcessTree {
         });
         amount
     }
+    pub fn convert_tree_into_list(&self) -> Vec<Process>{
+        let mut processes = Vec::<Process>::new();
+        processes.push(self.task);
+        self.children.into_iter().for_each(f)
+
+    }
 }

@@ -17,6 +17,6 @@ use std::thread;
 fn main() {
     let trees = ProcessTree::new();
     trees.iter().for_each(|tree|{
-        println!("number of processes of tree {}: {}", tree.task.command.as_ref().unwrap(), tree.get_number_of_processes());
+        println!("number of processes of tree {}: {}", tree.task.pid, tree.get_number_of_processes());
     });
 }
