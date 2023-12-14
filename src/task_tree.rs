@@ -38,7 +38,7 @@ pub fn check_for_children_processes(ppid_pool: &Vec<(u64, u64)>, node: u64) -> V
 }
 #[derive(Debug)]
 pub struct ProcessTree {
-    pub task: Box<Process>,
+    pub process_node: Process,
     // children: Option<Box<Vec<Mutex<ProcessTree>>>>
     pub children: Vec<Arc<Mutex<ProcessTree>>>
 }
@@ -73,30 +73,27 @@ impl ProcessTree {
 
         // collect all trees into a vector, this will usually just be 
         // 2 trees with the main node pids 2 and 1 
-        let process_trees= {
-            let root_pids = pid_ppid_array
-                .iter()
-                .filter(|root_pid_ppid| {
-                    root_pid_ppid.1 == 0
-                })
-                .map(|root_ppid_pid| {
-                    root_ppid_pid.0
-                })
-                .collect::<Vec<u64>>();
+        let root_pids = pid_ppid_array
+            .iter()
+            .filter(|root_pid_ppid| {
+                root_pid_ppid.1 == 0
+            })
+            .map(|root_ppid_pid| {
+                root_ppid_pid.0
+            })
+            .collect::<Vec<u64>>();
 
-            let process_trees =
-                root_pids.iter().map(|pid| {
-                    let task = Box::new(Process::new(*pid));
-                    let children = 
-                        Self::recursively_construct_children(pid, &pid_ppid_array);
-                    let ptree = ProcessTree {
-                        task: task,
-                        children: children,
-                    };
-                    ptree
-                }).collect::<Vec<ProcessTree>>();
-            process_trees
-        };
+        let process_trees =
+            root_pids.iter().map(|pid| {
+                let task = Process::new(*pid);
+                let children = 
+                    Self::recursively_construct_children(pid, &pid_ppid_array);
+                let ptree = ProcessTree {
+                    process_node: task,
+                    children: children,
+                };
+                ptree
+            }).collect::<Vec<ProcessTree>>();
         // dbg!(&process_trees);
         process_trees
     }
@@ -110,7 +107,7 @@ impl ProcessTree {
 
             for child in children_processes {
                 let new_subtree = ProcessTree {
-                    task: Box::new(Process::new(child)),
+                    process_node: Process::new(child),
                     children: Self::recursively_construct_children(&child, &pid_ppid_array),
                 };
                 vec.push(Arc::new(Mutex::new(new_subtree)));
@@ -130,10 +127,17 @@ impl ProcessTree {
         });
         amount
     }
-    pub fn convert_tree_into_list(&self) -> Vec<Process>{
-        let mut processes = Vec::<Process>::new();
-        processes.push(self.task);
-        self.children.into_iter().for_each(f)
+    // pub fn flatten_tree(&self) -> Vec<Arc<Mutex<Process>>> {
+    //     let mut processes = Vec::<Arc<Mutex<Process>>>::new();
 
-    }
+    //     processes.push(Arc::new(Mutex::new(self.process_node))); 
+
+    //     // Recursively flatten the tree for each child
+    //     for child in &self.children {
+    //         child = child.into_inner().unwrap();
+    //         processes.extend(child.flatten_tree());
+    //     }
+
+    //     processes
+    // }
 }

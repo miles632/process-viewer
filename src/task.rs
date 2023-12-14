@@ -29,29 +29,8 @@ impl Process {
             runtime: fetch_running_time(&pid)
         }
     }
+    pub fn update(&mut self) {
+        self.runtime = fetch_running_time(&self.pid);
+        self.command = fetch_command(&self.pid);
+    }
 }
-
-// pub fn add_tasks_at_startup_p <'a>() -> Vec<Arc<Mutex<Task>>> {
-//     let mut tasks: Vec<Arc<Mutex<Task>>> = Vec::new();
-//     if let Ok(proc_entries) = std::fs::read_dir("/proc") {
-//         tasks = proc_entries
-//             .par_bridge()
-//             .filter_map(|entry| entry.ok())
-//             .filter(|entry| is_pid(entry))
-//             .map(|entry| {
-//                 let pid_string = entry.file_name().into_string().unwrap();
-//                 let pid = pid_string.parse::<u64>().unwrap();
-//                 Arc::new(Mutex::new(Task {
-//                     pid,
-//                     cpu_usage: 0,
-//                     mem_usage: 0,
-//                     runtime: task_calls::fetch_running_time(&pid),
-//                     command: task_calls::fetch_command(&pid),
-//                     // parent: None,
-//                     // children: None,
-//                 }))
-//             })
-//             .collect();
-//     }
-//     tasks
-// }

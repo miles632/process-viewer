@@ -58,5 +58,6 @@ pub fn fetch_running_time(pid: &u64) -> Option<f64> {
     let starttime = stat_lines[21].parse::<f64>().ok()?;
 
     let running_time = system_uptime as f64 - (starttime as f64 / 100.0);
+    // let running_time = system_uptime as f64 - starttime;
     Some(running_time)
 }
