@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #![warn(unused_variables)]
 
 use std::ops::Deref;
@@ -140,4 +141,8 @@ impl ProcessTree {
 
     //     processes
     // }
+=======
+struct Task_Tree {
+    
+>>>>>>> parent of e7bdfa2 (changed up stuff a bit)
 }
